@@ -4,6 +4,7 @@ import { VClosePopper as vClosePopper } from 'floating-vue';
 import CCIcon from './CCIcon.vue';
 import { EMOJIS } from '@/constants/emojis';
 import { ICONS } from '@/constants/hicons';
+import { isElementVisible } from '@/utils/isElementVisible';
 
 defineProps<{
   selectedIcon?: string
@@ -48,6 +49,22 @@ function scrollToSection(name: string) {
     activeSection.value = name
   }
 }
+
+function onContainerScroll() {
+  if (!scrollContainerRef.value) {
+    return
+  }
+  const sections = scrollContainerRef.value.querySelectorAll<HTMLElement>('[data-section-name]')
+  if (!sections?.length) {
+    return
+  }
+  // find the first visible section and set it as active
+  const firstVisibleSection = Array.from(sections).find(section => isElementVisible(section, scrollContainerRef.value!))
+  const sectionName = firstVisibleSection?.dataset?.sectionName
+  if (sectionName) {
+    activeSection.value = sectionName
+  }
+}
 </script>
 
 <template>
@@ -66,7 +83,11 @@ function scrollToSection(name: string) {
     </div>
 
     <!-- body -->
-    <div class="tw-max-h-80 tw-overflow-auto tw-p-2" ref="scrollContainerRef">
+    <div
+      class="tw-max-h-80 tw-overflow-auto tw-p-2"
+      ref="scrollContainerRef"
+      @scroll="onContainerScroll"
+    >
       <div v-for="section in emojsSections" :key="section.name" :data-section-name="section.name">
         <div class="tw-font-semibold">
           {{ section.name }}
