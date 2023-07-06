@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Dropdown, VClosePopper as vClosePopper } from 'floating-vue'
+import { randomizeIcon } from '@/utils/icons';
 import CCIcon from './CCIcon.vue';
 import IconsListVue from './IconsList.vue';
 
@@ -37,7 +38,10 @@ function select(icon: string) {
           @select="select"
         />
         <div class="tw-flex tw-p-2 tw-border-t">
-          <button v-close-popper>
+          <button
+            v-close-popper
+            @click="select(randomizeIcon())"
+          >
             Randomize
           </button>
           <button
